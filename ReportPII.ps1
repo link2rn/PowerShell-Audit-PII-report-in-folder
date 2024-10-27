@@ -1,5 +1,5 @@
 ﻿# Define the directory and file types to search
-$SearchPath = "<SEARCH_PATH>"
+$SearchPath = "D:\Working\CodeLab\Powershell\CodeLab\PowerShell\Report PII\SampleFiles"
 $FileTypes = "*.txt", "*.csv", "*.docx", "*.doc", "*.xlsx", "*.xls", "*.pptx", "*.ppt", "*.rtf"
 
 # Define patterns for PII (e.g., SSNs, Credit Card Numbers, etc.)
@@ -32,7 +32,10 @@ function Get-DocumentContent {
             $Content = $Document.Content.Text -split "`r`n"
             $Document.Close()
             $Word.Quit()
+            [System.Runtime.Interopservices.Marshal]::ReleaseComObject($Document) | Out-Null
             [System.Runtime.Interopservices.Marshal]::ReleaseComObject($Word) | Out-Null
+            [GC]::Collect()
+            [GC]::WaitForPendingFinalizers()
             return $Content
         }
         {($_ -eq ".xlsx") -or ($_ -eq ".xls")} {
